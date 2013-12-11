@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.hqkang.ChatRobot.Servlet.Util.*;
+import com.hqkang.Mysql.MysqlConnect;
 
 /**
  * 核心请求处理类
@@ -46,12 +47,16 @@ public class CoreServlet extends HttpServlet {
 	 * 处理微信服务器发来的消息
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String user = getServletConfig().getInitParameter("user");
+		String passwd = getServletConfig().getInitParameter("passwd");
+		MysqlConnect.connect(user, passwd);
 		// 将请求、响应的编码均设置为UTF-8（防止中文乱码）
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
 		// 调用核心业务类接收消息、处理消息
 		String respMessage = CoreService.processRequest(request);
+		
 		
 		// 响应消息
 		PrintWriter out = response.getWriter();

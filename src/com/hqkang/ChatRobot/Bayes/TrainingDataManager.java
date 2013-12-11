@@ -17,7 +17,6 @@ public class TrainingDataManager {
 	private static Set<String> trainingFileClassifications = init();//训练语料分类集合
 	private static int trainingFileCount = getTrainingFileCount();
 	private static HashMap<String,Integer> trainingFileCountOfClassification = new HashMap<String,Integer>();
-	private static HashMap<String,Integer> countContainKeyOfClassification = new HashMap<String,Integer>();
     
 	public static Set<String> init() 
     {	
@@ -225,8 +224,6 @@ public class TrainingDataManager {
     * @return 给定分类中包含关键字／词的训练文本的数目
     */
     public static int getCountContainKeyOfClassification(String classification,String key) {
-    	String mapKey = classification+"\t"+key;
-    	if(!countContainKeyOfClassification.containsKey(mapKey)) {
 	    	 int ret = 0;
 	         Statement statement=null;
 	  	    try {
@@ -265,9 +262,6 @@ public class TrainingDataManager {
 	  				}
 	  	    }
 	  		
-	  		countContainKeyOfClassification.put(mapKey, ret);
 	        return ret;
-    	} else
-    		return countContainKeyOfClassification.get(mapKey);
     }
 }

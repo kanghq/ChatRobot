@@ -36,7 +36,7 @@ public class TiebaDownloader implements Runnable{
 	public void run() {
 		MainPageDownloader td = null;
 		try {
-		System.out.println("下载第"+(i+1)+"页，共"+pages+"页");
+		System.out.println("下载第"+i+"页，"+pages+"是最后一页");
 		hsmap = Tieba.getHomePageHashMap(address+"&pn="+i*50);
 		tDLatch=new CountDownLatch(hsmap.size());
 		System.out.println("hsmapsize"+hsmap.size());

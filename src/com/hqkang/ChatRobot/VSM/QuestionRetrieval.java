@@ -17,9 +17,33 @@ import com.hqkang.Mysql.MysqlConnect;
 
 public class QuestionRetrieval {
 	long id = -1;
+	long insertId = -1;
 	public static double[] matrix;
 	List<String> merge = new LinkedList<String>();
+	
 	public boolean simCal(String questionLine) {
+		Statement statement=null;
+		ResultSet rs = null;
+		String SQL = null;
+		try {
+			statement = MysqlConnect.connection.createStatement();
+		} catch (SQLException e2) {
+			System.err.println("数据库连接失败");
+		}
+		questionLine = questionLine.replace("'","").replace("\\","");
+		SQL = "insert into questions (id,time,question,link) values(null,null,'"+questionLine+"',0);";
+		try {
+			statement.executeUpdate(SQL);
+			ResultSet rSID = statement.getGeneratedKeys();
+			if (rSID.next()) {
+				insertId = rSID.getInt(1);
+	    	}
+			rSID.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			System.err.println("问句记录失败");
+		}
+		
 		HashMap<String,Double> que = new HashMap<String,Double>();
 		//br.readLine();
 		Sentence2Keywords ques = new Sentence2Keywords(questionLine);
@@ -36,15 +60,8 @@ public class QuestionRetrieval {
 		}
 		dist = Math.sqrt(dist);
 		int maxSenIndex = 0;
-		Statement statement=null;
-	    try {
-			statement = MysqlConnect.connection.createStatement();
-		} catch (SQLException e2) {
-			System.err.println("数据库连接失败");
-		}
+	    
 
-		ResultSet rs =null;
-		String SQL=null;
 		try
 	    {	HashSet<Long> docSet = new HashSet<Long>();
 	    	HashSet<String> segSet = new HashSet<String>();
@@ -88,6 +105,12 @@ public class QuestionRetrieval {
 				
 				docList.add(oneDoc);
 			}
+			if(rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					System.err.println("关闭ResultSet时出错");
+				}
 
 			double maxIndex = 0; 
 			for(String seg:segSet){
@@ -171,6 +194,8 @@ public class QuestionRetrieval {
 	
 	public String getAns() {
 		String answer = "";
+		long answerId = -1;
+		long answerCount = -1;
 		Statement statement=null;
 		ResultSet rs = null;
 		String SQL = null;
@@ -196,25 +221,36 @@ public class QuestionRetrieval {
 					System.err.println("关闭ResultSet时出错");
 				}
 			
-			SQL = "select content from tieba where floor <> 0 and floor<> 1 and pageId="+pageId+" and class like '"+classes+"' order by floor asc ;";
+			SQL = "select content,id,abstract from tieba where floor <> 0 and floor<> 1 and pageId="+pageId+" and class like '"+classes+"' order by floor asc ;";
 			rs = statement.executeQuery(SQL);
-			if(rs.getRow()<1) {
+			if(rs.getRow()<=0) {
 				rs.close();
-				SQL = "select content from tieba where floor <> 0 and floor<> 1 and pageId="+pageId+" order by floor asc ;";
+				SQL = "select content,id,abstract from tieba where floor <> 0 and floor<> 1 and pageId="+pageId+" order by abstract desc ;";
 				rs = statement.executeQuery(SQL);
 			}
-			int m = 0;
-			while(rs.next()) {
-				m++; 
-				if(m<6&&answer.length()<rs.getString(1).length())
-					answer = rs.getString(1);
+			
+			if(rs.first()) {
+				answer = rs.getString(1);
+				answerId = rs.getLong(2);
+				answerCount = rs.getLong(3)+1;
+				SQL = "UPDATE  `tieba`.`tieba` SET  `abstract` =  '"+answerCount+"' WHERE  `tieba`.`id` ="+answerId+";";
+				statement.executeUpdate(SQL);
+				SQL = "insert into questions (id,time,question,link) values(null,null,'"+answer+"',"+insertId+"); ";
+				statement.executeUpdate(SQL);
+			} 
+				
+			if(id ==-1) {
+				SQL = "insert into questions (id,time,question,link) values(null,null,'sorry,tieba_id:"+id+"',"+insertId+"); ";
+				statement.executeUpdate(SQL);
 			}
+			
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.err.println("问题答案检索失败");
-		}
+		} 
 		if(!answer.equals("")) return answer;
-		else return"not found reply";
+		else return"不知道怎么回答你。。。";
 	}
 	
 

@@ -41,13 +41,7 @@ public class InsertWords {
 	  }
 
 	public static void init () {
-		
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			System.err.println("找不到MySql驱动程序包");
-			System.exit(0);
-		}
+	
 		
 		File file = new File("data" + File.separator + "dict.txt");
 		if (!file.isFile()) {
@@ -70,6 +64,7 @@ public class InsertWords {
 
 	
 		try {
+			System.out.println("开始插入分词表");
 			while ((line = in.readLine()) != null) {
 				try {
 					String[] sep = line.split("\t");
@@ -85,6 +80,7 @@ public class InsertWords {
 					System.err.println("SQL词语插入错误");
 				}
 			}
+			System.out.println("插入封面词表结束");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.err.println("文件读取失败");

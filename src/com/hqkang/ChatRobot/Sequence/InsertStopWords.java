@@ -64,6 +64,7 @@ public class InsertStopWords {
 		String line = null;
 		
 		try {
+			System.out.println("开始插入停用词表");
 			while ((line = in.readLine()) != null) {
 				try {
 					insert(line);
@@ -72,6 +73,7 @@ public class InsertStopWords {
 					System.err.println("SQL停用词插入错误");
 				}
 			}
+			System.out.println("停用词表插入结束");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.err.println("读取停用词错误");

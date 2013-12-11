@@ -23,30 +23,38 @@ public class Main {
 	static String address =null;
 	static String classes = null;
 	static int pages;
+	static int startpage = 0;
 	public static void main(String[] args) {
 		
-		if(!(args.length==1|args.length==2|args.length==4)) {
+		if(!(args.length==1|args.length==4|args.length==5)) {
 			System.err.println("参数错误");
 			System.exit(0);
 		}
 
 		
 		
-		if (args.length==4&&args[3].equals("DEBUG")) {
+		if (args.length==5&&args[0].equals("DEBUG")) {
 			DEBUG = true;
-			classes = args[2];
-			address = args[0];
-			pages = Integer.parseInt(args[1]);
+			classes = args[4];
+			address = args[1];
+			pages = Integer.parseInt(args[3]);
+			startpage = Integer.parseInt(args[2]);
 			pool=Executors.newCachedThreadPool();
 		} 
 		
 
 		
-		if(args.length==2) {
-		
+		if(args.length==4&&args[0].equals("COLLECT")) {
 			
-			address = args[0];
-			pages = Integer.parseInt(args[1]);
+			
+			address = args[1];
+			startpage = Integer.parseInt(args[2]);
+			pages = Integer.parseInt(args[3]);
+			if(pages - startpage >15) {
+				System.err.println("下载页面太多");
+				System.exit(0);
+			}
+			pages = Integer.parseInt(args[3]);
 			pool = Executors.newFixedThreadPool(20);
 			
 		}
@@ -68,7 +76,7 @@ public class Main {
 			if(args[0].equals("insertWords")) {
 				InsertWords.init();
 			}
-		}
+		} 
 			
 		
 
@@ -77,30 +85,27 @@ public class Main {
 			System.out.println("请提问");
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			try {
-				q.simCal(br.readLine());
+				if(q.simCal(br.readLine())) {
+					System.out.println(q.getAns());
+				} else{
+					System.out.println("句子太短");
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				System.err.println("输入失败");
 				System.exit(0);
 			}
-			System.out.println(q.getAns());
 		}
 			
 			
 		
 		
-		if(args.length>=2){
-			int startpage = 0;
+		if(args.length>=3){
+			
 			CountDownLatch latch=null;
 			
-			if(DEBUG) {
-				startpage =0;
-				latch=new CountDownLatch(pages);
-			} 	else {
-				startpage = 1;
-				latch=new CountDownLatch(pages-1);
-			}
-			for(int i = startpage;i<pages;i++) {
+			latch=new CountDownLatch(pages-startpage+1);
+			for(int i = startpage-1;i<=pages-1;i++) {
 				
 				TiebaDownloader td= new TiebaDownloader(address,classes,pages,i,latch);
 				pool.submit(new Thread(td));

@@ -25,7 +25,8 @@ public class BuildInvertIndex {
 			ResultSet rs =null;
 			String SQL=null;
 			try
-		    {
+		    {	
+				
 	
 				SQL="select count(*) from segments where tieba_id = '"+tieba_id+"' and seg like '"+word+"'";
 	
@@ -184,9 +185,13 @@ public static double IDF(String key,int freq) {
 			String SQL=null;
 			try
 		    {
+				SQL = "TRUNCATE invert_index";
+				statement.executeUpdate(SQL);
+				
 				SQL = "SELECT distinct seg, tieba_id FROM segments";
 
 				rs = statement.executeQuery(SQL);
+				
 				while(rs.next()) {
 
 					insert(rs.getString(1),Long.parseLong(rs.getString(2)));

@@ -91,7 +91,6 @@ public class ChnSeq {
 	public static TireNode getNodeByWord(String word) {
 		if (tire == null) {
 			System.err.println("需要先初始化ChnSeq对象！");
-			System.exit(0);
 		}
 		
 		TireNode node = tire;
