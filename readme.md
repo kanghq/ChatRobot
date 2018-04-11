@@ -1,4 +1,4 @@
-# A simple chart robot
+# A simple chat robot
 
 This is a chart robot collectiong data corpus from tieba.baidu.com, the world's largest chinese forum.
 
