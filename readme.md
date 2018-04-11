@@ -1,4 +1,4 @@
-# A chart robot
+# A simple chart robot
 
 This is a chart robot collectiong data corpus from tieba.baidu.com, the world's largest chinese forum.
 
@@ -7,7 +7,7 @@ Some algorithms are implemeted :
 The dictionary for probability word segmentation is get from [sougou input](https://pinyin.sogou.com/dict/).
 
 ### How to add this robot as a friend
-~~please scan the QE code using the Wechat.~~
+~~please scan the QR code using the Wechat.~~
 
 
 ### Building
@@ -35,7 +35,7 @@ MYSQL database
 
  `java -jar xx.jar BUILDINDEX`
 
- 7. change the wechat account to the develp mode,add your tomcat url
+ 7. change the wechat account to the develop mode,add your tomcat url
 
     [http://your.url.here/index.jsp](http://your.url.here/index.jsp) to
     the wechat API.note change the token to yours.
